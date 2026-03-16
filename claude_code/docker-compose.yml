@@ -1,0 +1,18 @@
+services:
+  claude-cli:
+    build: .
+    container_name: claude-cli-container
+    volumes:
+      # 將當前目錄（您的程式碼）掛載到 Container 的 /workspace 裡
+      # OrbStack 對此有極佳的 I/O 最佳化，讀寫效能近乎原生
+      - ./:/workspace
+      # 使用獨立的 Docker Volume 來存放 Claude 的設定檔與登入狀態
+      # 這樣就算您重建 Container，也不用重新走一次 OAuth 登入流程
+      - claude-config:/root/.claude
+    # 保持 TTY 開啟，讓 Container 在背景持續運行，隨時可以進去下指令
+    tty: true
+    stdin_open: true
+
+volumes:
+  # 宣告具名 Volume
+  claude-config:
